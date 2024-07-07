@@ -1,0 +1,488 @@
+/* Base styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #e4ecf4;
+}
+
+header {
+    display: flex;
+    align-items: center; /* Align items vertically centered */
+    justify-content: space-between; /* Distribute space between items */
+    margin: 20px 0;
+ 
+}
+
+header h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #304a83;
+    font-family: 'Mochiy Pop P One', sans-serif; 
+    font-weight: 900;
+    text-shadow: 0 0 10px rgba(12, 66, 63, 0.304); /* White glow effect */
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 90vw;
+    height: calc(100vh - 130px);
+    padding: 20px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border-radius: 12px;
+   
+    overflow: hidden;
+    position: relative;
+    background-color: rgba(0, 0, 0, 0.101); /* Example background color */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8); /* Heavy black shadow */
+}
+
+/* Toolbar styles */
+.toolbar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.toolbar button {
+    background-color: #3b5998;
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.toolbar button:hover {
+    background-color: #1a237e;
+}
+
+.toolbar button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(58, 87, 149, 0.4);
+}
+
+/* Default layout for smaller screens */
+.text-editor-window {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    position: relative; /* Allows positioning of the copy button within this container */
+}
+
+#text-input {
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    font-size: 16px;
+    border: 1px solid #c5cae9;
+    border-radius: 8px;
+    box-sizing: border-box;
+    resize: both;
+    overflow: auto;
+    white-space: pre-wrap; /* Ensure new lines are respected */
+    word-wrap: break-word; /* Ensure long words are wrapped */
+    outline: none; /* Remove outline to match textarea */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8); /* Heavy black shadow */
+}
+
+.search-method-window {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.input-text {
+    position: relative;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+label {
+    font-weight: bold;
+    color: #1a237e;
+}
+
+select,
+input {
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #c5cae9;
+    border-radius: 8px;
+}
+
+#replace-text {
+    display: block;
+}
+
+#run-btn {
+    padding: 12px 24px;
+    font-size: 16px;
+    background-color: #3b5998;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    margin: auto;
+    width: 30%;
+    cursor: pointer;
+    margin-bottom: 5px;
+    box-shadow: 0 1px 12px rgba(79, 77, 77, 0.8); /* Heavy black shadow */
+}
+
+#run-btn:hover {
+    background-color: #1a237e;
+}
+
+/* Footer styles */
+.footer {
+    width: 100%;
+    text-align: center;
+    background-color: #3b5998;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    margin-top: 20px;
+}
+
+.footer p {
+    margin: 0;
+    font-size: 14px;
+    color: #ffffff;
+}
+
+/* Media queries */
+
+/* For devices smaller than 768px, including landscape mode */
+@media (max-width: 767px) {
+    .container {
+        padding: 15px;
+        width: 95vw;
+        height: calc(100vh - 140px);
+        flex-direction: column;
+    }
+
+    .text-editor-window,
+    .search-method-window {
+        width: 100%;
+    }
+
+    #text-input {
+        height: 100%;
+    }
+
+    .footer {
+        padding: 15px 0;
+    }
+}
+
+/* For devices 768px and wider */
+@media (min-width: 768px) {
+    .container {
+        flex-direction: row;
+        gap: 20px;
+        height: calc(100vh - 130px);
+    }
+
+    .search-method-window {
+        flex: 1;
+        gap: 5vh;
+    }
+
+    .toolbar {
+        justify-content: flex-start;
+        margin-bottom: 20px;
+    }
+
+    .text-editor-window {
+        flex: 2;
+    }
+
+    .toolbar {
+        order: -1;
+        margin-bottom: 20px;
+    }
+}
+
+/* Optional: Placeholder styling for contenteditable */
+#text-input:empty:before {
+    content: attr(placeholder);
+    color: #999;
+    display: block;
+    padding: 5px;
+}
+
+mark.highlight {
+    background-color: rgba(0, 0, 255, 0.3); /* Light blue highlight */
+    color: #000; /* Black text color for better visibility */
+}
+
+.warning-message {
+    color: red;
+    display: none;
+    font-size: 0.9em;
+}
+
+.warning-message-mid {
+    color: red;
+    display: none;
+    font-size: 0.9em;
+    margin: auto;
+}
+
+.success-message {
+    color: green;
+    display: none;
+    font-size: 0.9em;
+    margin: auto;
+}
+
+
+
+/* styles.css */
+.output-box {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 10px;
+    background: #f5f5f5;
+    white-space: pre-wrap; /* Preserve whitespace formatting */
+    min-height: 49%; /* Ensure some height for visibility */
+    border: 1px solid #c5cae9;
+    border-radius: 8px;
+    box-sizing: border-box;
+    resize: both;
+    overflow: auto;
+    white-space: pre-wrap; /* Ensure new lines are respected */
+    word-wrap: break-word; /* Ensure long words are wrapped */
+    outline: none; /* Remove outline to match textarea */
+    font-size: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8); /* Heavy black shadow */
+    color: rgb(0, 0, 0);
+   
+}
+
+.highlight {
+    background-color: rgba(0, 0, 255, 0.3); /* Light blue highlight */
+    color: #000; /* Black text color for better visibility */
+}
+
+/* Copy button styles */
+.copy-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: #3b5998;
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.copy-btn:hover {
+    background-color: #1a237e;
+}
+
+.copy-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(58, 87, 149, 0.4);
+}
+
+.copy-btn i {
+    font-size: 18px;
+}
+
+/* Style specifically for the "Case Sensitive?" checkbox and label */
+.case-sensitive-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8vh; /* Space between checkbox and label */
+}
+
+.case-sensitive-group label {
+    margin: 0; /* Remove default margin around label */
+    font-weight: normal; /* Ensure label font-weight does not override other labels */
+}
+
+.case-sensitive-group input[type="checkbox"] {
+    margin: 0; /* Remove default margin around checkbox */
+}
+label[for="case-sensitive"] {
+  font-weight: 700;
+}
+/* Ensure wrapped-text-fields is initially hidden */
+#wrapped-text-fields {
+    display: none; /* Hidden by default, will be shown based on the search method */
+    margin-top: 10px; /* Add some space above the fields */
+    display: flex;
+    flex-direction: column; /* Stack labels and inputs vertically on smaller screens */
+}
+
+/* Style the labels and inputs within the wrapped-text-fields */
+#wrapped-text-fields label {
+    margin-bottom: 5px; /* Space between label and input */
+    font-weight: bold; /* Make labels stand out */
+}
+
+/* Style inputs within the wrapped-text-fields */
+#wrapped-text-fields input {
+    width: 40%; /* Full width on smaller screens */
+    padding: 8px; /* Add padding inside the input fields */
+    box-sizing: border-box; /* Ensure padding is included in the element's total width and height */
+    margin-bottom: 10px; /* Space between inputs */
+}
+
+/* Apply different styles for larger screens */
+@media (min-width: 600px) {
+    #wrapped-text-fields {
+        flex-direction: row; /* Align labels and inputs horizontally on larger screens */
+        align-items: center; /* Center items vertically */
+        margin-top: 20px; /* Increase margin for larger screens */
+        width: 10%; /* Full width on smaller screens */
+    }
+
+    #wrapped-text-fields label {
+        margin-right: 10px; /* Space between label and input */
+        margin-bottom: 0; /* Remove bottom margin on larger screens */
+    }
+
+    #wrapped-text-fields input {
+        width: 10vh; /* Auto width on larger screens */
+        margin-right: 10px; /* Space between inputs */
+        margin-bottom: 0; /* Remove bottom margin on larger screens */
+    }
+}
+
+/* Apply different styles for larger screens */
+@media (max-width: 1025px) {
+    #wrapped-text-fields {
+        flex-direction: row; /* Align labels and inputs horizontally on larger screens */
+        align-items: center; /* Center items vertically */
+        margin-top: 20px; /* Increase margin for larger screens */
+        width: 30%; /* Full width on smaller screens */
+    }
+
+    #wrapped-text-fields label {
+        margin-right: 10px; /* Space between label and input */
+        margin-bottom: 0; /* Remove bottom margin on larger screens */
+    }
+
+    #wrapped-text-fields input {
+        width: 10vh; /* Auto width on larger screens */
+        margin-right: 10px; /* Space between inputs */
+        margin-bottom: 0; /* Remove bottom margin on larger screens */
+    }
+}
+.zero-message {
+    color: red; /* Color for no instances found message */
+    display: none; /* Initially hidden */
+    font-size: 0.9em;
+    margin-top: 10px; /* Adjust margin if needed */
+}
+
+.task-done-message {
+    color: green; /* Color for success message */
+    display: none; /* Initially hidden */
+    font-size: 0.9em;
+    margin-top: 10px; /* Adjust margin if needed */
+}
+
+#remo-logo {
+    width: 40%;
+    margin: 0; /* Optional: remove any margin if it affects positioning */
+}
+
+
+
+
+
+
+.all-bars {
+    box-shadow: 0 1px 12px rgba(0, 0, 0, 0.8); /* Heavy black shadow */
+}
+   
+#case-sensitive {
+    box-shadow: 0 1px 12px rgba(79, 77, 77, 0.8); /* Heavy black shadow */
+}
+    
+
+
+@media (min-width: 2000px) {
+        .form-group label {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+    .all-bars {
+        font-size: 22px;
+    }
+    #case-sensitive {
+        width: 30px;
+        height: 30px;
+    }
+
+    .output-box
+    {
+        font-size: 24px;
+    }
+
+    #text-input {
+        font-size: 24px;
+    }
+    }
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+       
+        width: 100%;
+    }
+    
+    h1 {
+        flex-grow: 1;
+        text-align: center;
+        margin: 0;
+    }
+    
+    nav {
+        margin-left: auto;
+        margin-right: 30px;
+    }
+    
+    nav ul {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    
+    nav ul li {
+        margin-left: 20px;
+    }
+    
+    nav ul li a {
+        text-decoration: none;
+        color: #000;
+    }
+    

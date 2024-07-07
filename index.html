@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remopad</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="assets/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&display=swap">
+    <link rel="icon" href="favicon.png" type="image/png">
+
+</head>
+<body>
+    <header>
+        
+        <!-- <img id = "remo-logo" src = "remo-logo.png"> -->
+        <h1>Remopad Text Editor</h1>
+       
+        <!-- <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Guide</a></li>
+                <li><a href="#">Support me</a></li>
+            </ul>
+        </nav> -->
+        
+    </header>
+    <div class="container">
+        <div class="search-method-window">
+            <!-- <div class="toolbar">
+                <button id="undo-btn"><i class="fas fa-undo"></i></button>
+                <button id="redo-btn"><i class="fas fa-redo"></i></button>
+            </div> -->
+            <div class="form-group">
+                <label for="search-method">Search Method:</label>
+                <select id="search-method" class = "all-bars">
+                    <option value="all-instances">All instances of search term</option>
+                    <option value="first-instance">First instance of search term</option>
+                    <option value="last-instance">Last instance of search term</option>
+                    <option value="lines-containing">Lines with search term</option>
+                    <option value="lines-not-containing">Lines without search term</option>
+                    <option value="lines-starting">Lines starting with search term</option>
+                    <option value="lines-ending">Lines ending with search term</option>
+                    
+
+                    <option value="lowercase">All lowercase letters</option>
+                    <option value="uppercase">All uppercase letters</option>
+
+                    <option value="all-numbers">All numbers</option>
+                    <option value="all-spaces">All spaces</option>
+                    <option value="all-symbols">All symbols</option>
+                    <option value="repeated-words">Repeated words in a row</option>
+                    <option value="wrapped-text">Text wrapped with</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="search-term">Search Term:</label>
+                <input type="text" id="search-term" class = "all-bars">
+                <div id="search-term-warning" class="warning-message-mid"></div>
+            </div>
+
+            <!-- Wrapped Text Fields -->
+            <div id="wrapped-text-fields" class = "form-group">
+                <label for="start-quote">Start:</label>
+                <input type="text" id="start-quote" class = "all-bars">
+                <label for="end-quote">End:</label>
+                <input type="text" id="end-quote" class = "all-bars">
+               
+            </div>
+            <div id="wrapped-text-warning" class="warning-message"></div> 
+            <!-- New Case Sensitive section -->
+            <div class="form-group case-sensitive-group">
+                <label for="case-sensitive">Case Sensitive?</label>
+                <input type="checkbox" id="case-sensitive">
+            </div>
+            <div class="form-group">
+                <label for="task">Task:</label>
+                <select id="task" class = "all-bars">
+                    <option value="highlight">Highlight</option>
+                    <option value="copy">Copy</option>
+                    <option value="delete">Delete</option>
+                    <option value="replace">Replace with</option>
+                    <!-- <option value="uppercasify">UpperCasify</option> -->
+                </select>
+                <input type="text" id="replace-text" class = "all-bars" placeholder="Replacement text" style="display: none;">
+            </div>
+            <button id="run-btn">Run</button>
+            <div id="input-text-warning" class="warning-message-mid">Please input text.</div>
+            
+            <div class="task-done-message"></div>
+            <div class="zero-message"></div>
+            
+
+        </div>
+        <div class="text-editor-window">
+            <textarea id="text-input" placeholder="Enter text here..."></textarea>
+            <div id="output-box" class="output-box"></div>
+            <button id="copy-btn" class="copy-btn"><i class="fas fa-copy"></i></button>
+        </div>
+        <div class="resize-handle"></div>
+    </div>
+    <footer class="footer">
+        <p>&copy; Created by Ahmad Elhemaily. All rights reserved.</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
