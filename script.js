@@ -782,34 +782,7 @@ function uppercasify() {
     // Helper function to escape special characters in the query for regex
     function escapeRegExp(string) {
         return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    }
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-            
-        
-        
-        
-        
-
-
+    }  
 
 
         } else if (method === 'lines-not-containing') {
@@ -1674,8 +1647,6 @@ function sanitizeInput(input) {
     // Example sanitization
     return input.replace(/[^a-zA-Z0-9]/g, '');
 }
-
-// Add other task handling functions as needed
 
 
 
