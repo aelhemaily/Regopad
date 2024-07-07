@@ -450,6 +450,15 @@ label[for="case-sensitive"] {
     #text-input {
         font-size: 24px;
     }
+
+    .task-done-message {
+        font-size: 26px;
+    }
+
+    .zero-message {
+        font-size: 26px;
+    }
+
     }
     header {
         display: flex;

@@ -417,7 +417,7 @@ const endQuoteInput = document.getElementById('end-quote');
         successMessage.style.display = 'block';
         setTimeout(() => {
             successMessage.style.display = 'none';
-        }, 3000);
+        }, 1500);
     }
 
     function validateInputs() {
@@ -480,7 +480,7 @@ function displayTaskStatus(found) {
     setTimeout(() => {
         taskDoneMessage.style.display = 'none';
         zeroMessage.style.display = 'none';
-    }, 3000); // Adjust the timeout duration as needed
+    }, 1500); // Adjust the timeout duration as needed
 }
 
 function uppercasify() {
