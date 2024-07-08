@@ -349,37 +349,46 @@ const endQuoteInput = document.getElementById('end-quote');
             let modifiedLine = line;
             let match;
     
+            // Track lastIndex to avoid reprocessing already handled parts
+            let lastIndex = 0;
+    
             while ((match = wrappedTextRegex.exec(line)) !== null) {
-                const beforeText = match[1]; // startQuote
-                const innerText = match[2]; // Text between startQuote and endQuote
-                const afterText = match[3]; // endQuote
+                if (match.index >= lastIndex) {
+                    const beforeText = match[1]; // startQuote
+                    const innerText = match[2]; // Text between startQuote and endQuote
+                    const afterText = match[3]; // endQuote
     
-                const originalText = match[0];
+                    const originalText = match[0];
     
-                if (taskAction === 'highlight') {
-                    const highlightedInnerText = `<mark class="highlight">${innerText}</mark>`;
-                    modifiedLine = modifiedLine.replace(originalText, `${beforeText}${highlightedInnerText}${afterText}`);
-                    found = true;
+                    if (taskAction === 'highlight') {
+                        const highlightedInnerText = `<mark class="highlight">${innerText}</mark>`;
+                        modifiedLine = modifiedLine.replace(originalText, `${beforeText}${highlightedInnerText}${afterText}`);
+                        lastIndex = match.index + beforeText.length + highlightedInnerText.length + afterText.length;
+                        found = true;
     
-                } else if (taskAction === 'copy') {
-                    contentToCopy += innerText + '\n';
-                    // Highlight the text in the output
-                    const highlightedInnerText = `<mark class="highlight">${innerText}</mark>`;
-                    modifiedLine = modifiedLine.replace(originalText, `${beforeText}${highlightedInnerText}${afterText}`);
-                    found = true;
+                    } else if (taskAction === 'copy') {
+                        contentToCopy += innerText + '\n';
+                        // Highlight the text in the output
+                        const highlightedInnerText = `<mark class="highlight">${innerText}</mark>`;
+                        modifiedLine = modifiedLine.replace(originalText, `${beforeText}${highlightedInnerText}${afterText}`);
+                        lastIndex = match.index + beforeText.length + highlightedInnerText.length + afterText.length;
+                        found = true;
     
-                } else if (taskAction === 'replace') {
-                    // Create a highlighted version of the replacement text
-                    const replacementText = sanitizeInput(replaceText.value);
-                    const highlightedReplacementText = `<mark class="highlight">${replacementText}</mark>`;
-                    // Replace the original text with the highlighted replacement text
-                    modifiedLine = modifiedLine.replace(originalText, `${beforeText}${highlightedReplacementText}${afterText}`);
-                    found = true;
+                    } else if (taskAction === 'replace') {
+                        // Create a highlighted version of the replacement text
+                        const replacementText = sanitizeInput(replaceText.value);
+                        const highlightedReplacementText = `<mark class="highlight">${replacementText}</mark>`;
+                        // Replace the original text with the highlighted replacement text
+                        modifiedLine = modifiedLine.replace(originalText, `${beforeText}${highlightedReplacementText}${afterText}`);
+                        lastIndex = match.index + beforeText.length + highlightedReplacementText.length + afterText.length;
+                        found = true;
     
-                } else if (taskAction === 'delete') {
-                    // Remove only the text between the start and end quotes, preserving the quotes
-                    modifiedLine = modifiedLine.replace(originalText, `${beforeText}${afterText}`);
-                    found = true;
+                    } else if (taskAction === 'delete') {
+                        // Remove only the text between the start and end quotes, preserving the quotes
+                        modifiedLine = modifiedLine.replace(originalText, `${beforeText}${afterText}`);
+                        lastIndex = match.index + beforeText.length + afterText.length;
+                        found = true;
+                    }
                 }
             }
     
@@ -392,7 +401,6 @@ const endQuoteInput = document.getElementById('end-quote');
                 // Ensure the copied content is highlighted in the output
                 outputBox.innerHTML = outputLines.join('\n');
                 copyToClipboard(contentToCopy.trim()); // Remove trailing newline
-              
             }
         } else if (taskAction === 'delete') {
             // Remove any empty lines after processing all lines
@@ -410,6 +418,7 @@ const endQuoteInput = document.getElementById('end-quote');
     function escapeRegExp(string) {
         return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
+    
     
 
 
@@ -1330,12 +1339,10 @@ function uppercasify() {
         
         
         
-        
         } else if (method === 'repeated-words') {
             // Function to create a regex with optional case sensitivity
             function createRegex(pattern, flags) {
                 return new RegExp(pattern, flags);
-               
             }
         
             // Determine regex flags based on the case sensitivity checkbox
@@ -1355,7 +1362,7 @@ function uppercasify() {
                     });
                 });
             }
-           
+        
             if (taskAction === 'highlight') {
                 outputLines = lines.map(line => highlightRepeatedWords(line));
                 outputBox.innerHTML = outputLines.join('\n');
@@ -1363,55 +1370,29 @@ function uppercasify() {
                 displayTaskStatus(found);
         
             } else if (taskAction === 'copy') {
-                // Track occurrences of each word
-                const wordCounts = new Map();
-            
-                // Count occurrences of each word in each line
+                const repeatedWords = [];
+        
                 lines.forEach(line => {
-                    const words = line.split(/\s+/);
-                    words.forEach(word => {
-                        const trimmedWord = word.trim();
-                        if (trimmedWord) {
-                            wordCounts.set(trimmedWord, (wordCounts.get(trimmedWord) || 0) + 1);
-                        }
-                    });
+                    const matches = line.match(regex);
+                    if (matches) {
+                        matches.forEach(match => {
+                            match.split(/\s+/).forEach(word => {
+                                if (!repeatedWords.includes(word)) {
+                                    repeatedWords.push(word);
+                                }
+                            });
+                        });
+                    }
                 });
-            
-                // Collect repeated words while respecting lines
-                const repeatedWordsPerLine = lines.map(line => {
-                    const words = line.split(/\s+/);
-                    const repeatedWords = words.filter(word => {
-                        const trimmedWord = word.trim();
-                        return wordCounts.get(trimmedWord) > 1;
-                    });
-                    // Include each repeated word the number of times it was repeated
-                    return repeatedWords.join(' ');
-                });
-            
-                // Join lines with repeated words, preserving line breaks
-                const repeatedWordsToCopy = repeatedWordsPerLine.join('\n');
-            
-                if (repeatedWordsToCopy) {
-                    copyToClipboard(repeatedWordsToCopy.trim()); // Copy to clipboard
-                    // Highlight the repeated words in the output
-                    outputBox.innerHTML = lines.map(line => highlightRepeatedWords(line, wordCounts)).join('\n');
+        
+                if (repeatedWords.length > 0) {
+                    copyToClipboard(repeatedWords.join('\n'));
+                    found = true;
                 }
-            
-                found = repeatedWordsToCopy.length > 0;
+        
+                outputLines = lines.map(line => highlightRepeatedWords(line));
+                outputBox.innerHTML = outputLines.join('\n');
                 displayTaskStatus(found);
-            
-                // Function to highlight repeated words
-                function highlightRepeatedWords(line, wordCounts) {
-                    return line.split(/\s+/).map(word => {
-                        const trimmedWord = word.trim();
-                        if (wordCounts.get(trimmedWord) > 1) {
-                            return `<mark class="highlight">${word}</mark>`;
-                        }
-                        return word;
-                    }).join(' ');
-                }
-            
-            
         
             } else if (taskAction === 'replace') {
                 const replacementText = sanitizeInput(replaceText.value);
@@ -1423,45 +1404,43 @@ function uppercasify() {
                 found = outputLines.some(line => /<mark class="highlight">/.test(line));
                 displayTaskStatus(found);
         
-            } else if (taskAction === 'delete') {
-                // Define a function to remove repeated words
-                function removeRepeatedWords(line) {
-                    const words = line.split(/\s+/); // Split line into words
-                    const seen = new Set(); // Track seen words
-                    return words.filter(word => {
-                        if (seen.has(word)) {
-                            return false; // Skip repeated words
-                        } else {
-                            seen.add(word);
-                            return true; // Keep the first occurrence
-                        }
-                    }).join(' '); // Join words back into a line
+              } else if (taskAction === 'delete') {
+                outputLines = lines.map(line => {
+                    return line.replace(regex, (match) => {
+                        // Split the matched text into individual words and filter duplicates
+                        const words = match.split(/\s+/);
+                        const uniqueWords = [];
+                        const seenWords = new Set();
+            
+                        words.forEach(word => {
+                            const normalizedWord = caseSensitiveCheckbox.checked ? word : word.toLowerCase();
+                            if (!seenWords.has(normalizedWord)) {
+                                seenWords.add(normalizedWord);
+                                uniqueWords.push(word);
+                            }
+                        });
+            
+                        return uniqueWords.join(' ');
+                    });
+                });
+                outputBox.innerHTML = outputLines.join('\n');
+                found = sanitizedText.trim() !== outputLines.join('\n').trim();
+                displayTaskStatus(found);
+            
+                if (!found) {
+                    noInstancesWarning.style.display = 'block';
+                    outputBox.innerHTML = ''; // Clear the output box if nothing was found
                 }
             
-                // Process each line to remove repeated words
-                outputLines = lines.map(line => removeRepeatedWords(line));
-            
-                // Filter out new empty lines but keep original empty lines
-                const originalLines = sanitizedText.split(/\r?\n/);
-                const processedLines = outputLines.filter((line, index) => line.length > 0 || originalLines[index].trim().length === 0);
-            
-                // Update output box and check if changes were made
-                outputBox.innerHTML = processedLines.join('\n');
-                found = sanitizedText.trim() !== processedLines.join('\n').trim();
-            
-                // Call the displayTaskStatus function to update UI status
-                displayTaskStatus(found);
+                // Helper function to escape special characters in the query for regex
+                function escapeRegExp(string) {
+                    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                }
             }
             
-            if (!found) {
-                noInstancesWarning.style.display = 'block';
-                outputBox.innerHTML = ''; // Clear the output box if nothing was found
-            }
-            
-            // Helper function to escape special characters in the query for regex
-            function escapeRegExp(string) {
-                return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            }
+                
+        
+        
         
             
             
@@ -1471,7 +1450,6 @@ function uppercasify() {
         
         
 
-        
         
         } else if (method === 'all-symbols') {
             if (taskAction === 'highlight') {
@@ -1486,9 +1464,11 @@ function uppercasify() {
                 found = outputBox.innerHTML.includes('<mark class="highlight">');
                 displayTaskStatus(found);
             } else if (taskAction === 'delete') {
-                const regex = /[^\w\s]+/g; // Regex to match symbols (non-word characters excluding spaces)
-            
-                // Split text into lines and track which lines are originally empty
+                // Use a regex to match all symbols (non-word characters excluding spaces)
+                const regex = /[^\w\s]/g;
+                
+                // Get the current content from the output box
+                const sanitizedText = textInput.value;
                 const originalLines = sanitizedText.split('\n');
                 const isOriginalEmptyLine = originalLines.map(line => line.trim().length === 0);
                 
@@ -1499,28 +1479,54 @@ function uppercasify() {
                     }
                     return line.replace(regex, ''); // Remove symbols from each non-empty line
                 });
-            
+                
                 // Filter out newly created empty lines while preserving original empty lines
                 const resultLines = modifiedLines.filter((line, index) => {
                     return line.trim().length > 0 || isOriginalEmptyLine[index];
                 });
-            
+                
+                // Update the output box with the modified lines
                 outputBox.innerHTML = resultLines.join('\n');
-            
+                
                 // Check if any symbols were removed
-                // If the resulting text still contains symbols, it means the delete operation didn't remove all occurrences
                 const hasSymbolsLeft = /[^\w\s]/.test(outputBox.innerHTML);
-            
+                
                 // Determine if any symbols were present initially
                 const hadSymbols = /[^\w\s]/.test(sanitizedText);
-            
+                
                 // If symbols were present and now none are left, found should be true
                 found = hadSymbols && !hasSymbolsLeft;
-            
+                
                 // Display the task status message
                 displayTaskStatus(found);
-            }
             
+        }
+        
+        function highlightAllSymbols() {
+            const regex = /[^\w\s]/g; // Regex to match symbols (non-word characters excluding spaces)
+            const sanitizedText = textInput.value;
+            const highlightedText = sanitizedText.replace(regex, match => `<mark class="highlight">${match}</mark>`);
+            outputBox.innerHTML = highlightedText;
+        }
+        
+        function copyAllSymbols() {
+            const regex = /[^\w\s]/g; // Regex to match symbols (non-word characters excluding spaces)
+            const sanitizedText = textInput.value;
+            const symbols = sanitizedText.match(regex);
+            if (symbols) {
+                copyToClipboard(symbols.join('\n'));
+                return true;
+            }
+            return false;
+        }
+        
+        function replaceAllSymbols(replacement) {
+            const regex = /[^\w\s]/g; // Regex to match symbols (non-word characters excluding spaces)
+            const sanitizedText = textInput.value;
+            const replacedText = sanitizedText.replace(regex, `<mark class="highlight">${replacement}</mark>`);
+            outputBox.innerHTML = replacedText;
+        }
+        
             
            
         
