@@ -12,3 +12,12 @@ vendor/* linguist-vendored=true
 # Exclude specific generated files
 build/* linguist-generated=true
 dist/* linguist-generated=true
+
+# Mark all CSS files as vendored
+*.css linguist-vendored
+
+# Ensure all JavaScript files are included
+*.js linguist-detectable=true
+*.jsx linguist-detectable=true
+*.ts linguist-detectable=true
+*.tsx linguist-detectable=true
