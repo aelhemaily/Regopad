@@ -1,2 +1,14 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Exclude minified files
+*.min.js linguist-generated=true
+*.min.css linguist-generated=true
+
+# Exclude specific directories
+node_modules/* linguist-vendored=true
+vendor/* linguist-vendored=true
+
+# Exclude specific generated files
+build/* linguist-generated=true
+dist/* linguist-generated=true
