@@ -188,6 +188,79 @@ const endQuoteInput = document.getElementById('end-quote');
         }
     }
 
+// Add these functions anywhere in your script.js file, preferably with other utility functions
+
+/**
+ * Deletes all text on a line BEFORE the FIRST instance of the search text.
+ */
+function deleteTextBefore(searchText, caseSensitive) {
+    // Note: We use the raw text input
+    const lines = textInput.value.split(/\r?\n/);
+    const resultLines = [];
+    let found = false;
+    
+    // Create a non-global regex (no 'g' flag) so line.search() finds the *first* match.
+    const regex = new RegExp(searchText, caseSensitive ? '' : 'i');
+
+    lines.forEach(line => {
+        // line.search() returns the index of the first match, or -1.
+        const firstMatchIndex = line.search(regex);
+        
+        if (firstMatchIndex !== -1) {
+            found = true;
+            // Keep everything from the start of the match to the end of the line.
+            resultLines.push(line.substring(firstMatchIndex));
+        } else {
+            resultLines.push(line);
+        }
+    });
+
+    return { text: resultLines.join('\n'), found };
+}
+
+/**
+ * Deletes all text on a line AFTER the LAST instance of the search text.
+ */
+/**
+ * Deletes all text on a line AFTER the FIRST instance of the search text.
+ */
+function deleteTextAfter(searchText, caseSensitive) {
+    const lines = textInput.value.split(/\r?\n/);
+    const resultLines = [];
+    let found = false;
+
+    // Use a non-global regex (no 'g' flag) to ensure we target the first match only.
+    const regexFlags = caseSensitive ? '' : 'i';
+    const regex = new RegExp(searchText, regexFlags);
+
+    lines.forEach(line => {
+        // 1. Find the starting index of the first match
+        const firstMatchIndex = line.search(regex);
+        
+        if (firstMatchIndex !== -1) {
+            found = true;
+            
+            // 2. Get the actual matched text to determine its length.
+            // We use the same non-global regex on the rest of the line starting from the match.
+            const match = line.substring(firstMatchIndex).match(regex);
+            
+            // 3. Calculate the end position (start index + match length)
+            const matchLength = match ? match[0].length : 0;
+            const endPosition = firstMatchIndex + matchLength;
+            
+            // 4. Keep everything from the start of the line up to the end position of the first match.
+            resultLines.push(line.substring(0, endPosition));
+        } else {
+            resultLines.push(line);
+        }
+    });
+
+    return { text: resultLines.join('\n'), found };
+}
+
+// NOTE: The function highlightDeletedBeforeAfter is no longer needed 
+// and should be deleted from your script.js.
+
     function highlightReplacedText(originalText, searchText, replacementText) {
         const regex = createRegex(searchText);
         return originalText.replace(regex, `<mark class="highlight">${replacementText}</mark>`);
@@ -578,6 +651,27 @@ function uppercasify() {
                 outputBox.innerHTML = replacedText;
                 found = replacedText.includes('<mark class="highlight">');
                 displayTaskStatus(found);
+} else if (taskAction === 'delete-before') {
+    const result = deleteTextBefore(query, caseSensitiveCheckbox.checked);
+    if (result.found) {
+        // Display the actual modified text from the deletion function
+        outputBox.innerHTML = sanitizeInput(result.text); 
+        found = true;
+    } else {
+        outputBox.innerHTML = ''; // Clear output if nothing was found/modified
+    }
+    displayTaskStatus(found);
+
+} else if (taskAction === 'delete-after') {
+    const result = deleteTextAfter(query, caseSensitiveCheckbox.checked);
+    if (result.found) {
+        // Display the actual modified text from the deletion function
+        outputBox.innerHTML = sanitizeInput(result.text); 
+        found = true;
+    } else {
+        outputBox.innerHTML = ''; // Clear output if nothing was found/modified
+    }
+    displayTaskStatus(found);
 
 
               } else if (taskAction === 'delete') {
